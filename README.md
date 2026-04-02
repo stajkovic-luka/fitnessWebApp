@@ -2,6 +2,7 @@
 
 Ovaj projekat predstavlja **full-stack fitness aplikaciju** za praćenje treninga, vežbi i ciljeva.  
 Napravljen je kao kombinacija **Laravel** (backend API) i **React** (frontend) tehnologija.
+Projekat je izradjen za kurs "Internet Tehnologije" Fakulteta organizacionih nauka
 
 ---
 
