@@ -1,123 +1,144 @@
-# REBEL Fitness — Web Aplikacija za Praćenje Treninga
+# REBEL Fitness
 
-Ovaj projekat predstavlja **full-stack fitness aplikaciju** za praćenje treninga, vežbi i ciljeva.  
-Napravljen je kao kombinacija **Laravel** (backend API) i **React** (frontend) tehnologija.
-Projekat je izradjen za kurs "Internet Tehnologije" Fakulteta organizacionih nauka
+A full-stack web application for tracking workouts, exercises, and fitness goals.
+It consists of a Laravel REST API and a React single-page application (SPA) with
+role-based access control (guest, member, admin).
 
----
+> Originally built as a term project for the *Internet Technologies* course at the
+> Faculty of Organisational Sciences, University of Belgrade. It is now maintained
+> as a personal learning project for practicing modern development and DevOps workflows.
 
-## Pokretanje projekta na lokalnoj mašini
+## Features
 
-### (1) Backend (Laravel API)
+The application has three user roles:
 
-#### Zahtevi
-- PHP ≥ 8.2  
-- Composer  
-- MySQL / MariaDB  
+**Guest**
+- Start a guest session without registering
+- Browse public workouts and view their details (read-only)
 
-#### Instalacija i pokretanje
+**Member**
+- Register and log in
+- Create, edit, and delete personal workouts
+- Add exercises to workouts
+- Filter and search exercises by type and keywords
+- Browse public workouts (read-only)
+
+**Admin**
+- Everything a member can do
+- View and delete users
+- Manage fitness goals
+- View and manage all workouts
+
+## Tech Stack
+
+| Layer    | Technology                                       |
+|----------|--------------------------------------------------|
+| Backend  | Laravel 11 (PHP 8.2+), Laravel Sanctum, Eloquent |
+| Database | MySQL / MariaDB                                  |
+| Frontend | React 19, Vite, React Router, Context API        |
+| Styling  | Custom CSS (dark theme)                          |
+
+## Project Structure
+
+```
+fitnessWebApp/
+├── backend/     # Laravel 11 API (REST, Sanctum authentication)
+├── frontend/    # React 19 + Vite SPA
+└── docs/        # documentation and archived reports
+```
+
+Each directory is a self-contained application: `backend/` is the Laravel project
+root, `frontend/` is the Vite project root.
+
+## Getting Started
+
+### Prerequisites
+
+- PHP >= 8.2 and [Composer](https://getcomposer.org/)
+- MySQL 8+ (or MariaDB)
+- Node.js >= 20.19 and npm
+
+### Backend
 
 ```bash
-cd .\internet-tehnologije-2024-projekat-fitnesswebapp_20210129_20210288\Domaci1\fitness-web-app\
+cd backend
 
-# Instalacija dependencija
+# 1. Install PHP dependencies
 composer install
 
-# Kreiraj .env fajl
-cp .env.example .env
-
-# Generiši app key
+# 2. Create the environment file and generate the application key
+touch .env
 php artisan key:generate
 
-# Podesi bazu u .env (DB_DATABASE, DB_USERNAME, DB_PASSWORD)!
-# Pokreni migracije i seedere:
+# 3. Set the database credentials in .env
+#    DB_CONNECTION=mysql
+#    DB_HOST=127.0.0.1
+#    DB_PORT=3306
+#    DB_DATABASE=fitness_web_app
+#    DB_USERNAME=<your-user>
+#    DB_PASSWORD=<your-password>
+
+# 4. Create the database, then run migrations and seeders
+mysql -u <your-user> -p -e "CREATE DATABASE fitness_web_app"
 php artisan migrate --seed
-```
-### Pokretanje factory-a i dodatnih seeding podataka (opciono):
 
-# Ako želiš da ponovo napuniš bazu test podacima:
-php artisan migrate:fresh --seed
-
-Seeder automatski kreira:
-
-- jednog admin korisnika
-- jednog member korisnika
-- nekoliko test treninga i vežbi (povezanih sa njima)
-
-Nakon toga pokreni server:
+# 5. Start the development server
 php artisan serve
+```
 
-**Server se pokreće na http://127.0.0.1:8000**
+The API is now available at `http://127.0.0.1:8000`.
 
-### (2) Frontend (React)
+The seeder creates demo data: one admin account, several member accounts, and a
+set of workouts, exercises, and goals.
 
-cd .\internet-tehnologije-2024-projekat-fitnesswebapp_20210129_20210288\Domaci2\fitness-frontend\
+### Seeded accounts (local development only)
 
-# Instalacija dependencija
+| Role  | Email                | Password |
+|-------|----------------------|----------|
+| Admin | admin@fitnessapp.com | password |
+
+### Frontend
+
+```bash
+cd frontend
+
+# 1. Install dependencies
 npm install
 
-# Pokretanje u dev režimu
+# 2. Start the development server
 npm run dev
+```
 
-**Frontend se pokreće na http://localhost:5173**
+The application is now available at `http://localhost:5173`.
 
-### Opis funkcionalnosti
+The frontend reads the API base URL from the `VITE_API_BASE` variable in
+`frontend/.env` (default: `http://127.0.0.1:8000/api`).
 
-Aplikacija omogućava upravljanje korisnicima, treninzima i vežbama, sa različitim nivoima pristupa:
+## API Overview
 
-1. Gost (guest)
+Authentication uses bearer tokens issued by Laravel Sanctum.
 
-Može da se uloguje kao gost (bez registracije)
+| Method                     | Endpoint                   | Description                      | Access        |
+|----------------------------|----------------------------|----------------------------------|---------------|
+| POST                       | `/api/register`            | Create an account                | Public        |
+| POST                       | `/api/login`               | Log in and receive an API token  | Public        |
+| POST                       | `/api/guest/login`         | Create a temporary guest session | Public        |
+| GET                        | `/api/weather/{city}`      | Current weather (OpenWeatherMap) | Public        |
+| GET                        | `/api/workouts`            | List workouts                    | Any logged-in role |
+| GET                        | `/api/workouts/{id}`       | Workout details                  | Any logged-in role |
+| GET / POST                 | `/api/users/workouts`      | List / create own workouts       | Member or admin |
+| PUT / DELETE               | `/api/users/workouts/{id}` | Update / delete own workout      | Member or admin |
+| GET / POST / PUT / DELETE  | `/api/exercises`           | Manage exercises                 | Member or admin |
+| GET / DELETE               | `/api/admin/users`         | List / delete users              | Admin         |
+| GET / POST / PUT / DELETE  | `/api/goals`               | Manage goals                     | Admin         |
 
-Vidi sve javne treninge (/workouts)
+## Roadmap
 
-Vidi detalje treninga, ali ne može da ih menja ili briše
+The project is being modernized step by step. Planned work:
 
-2. Član (member)
-
-Može da kreira nalog i loguje se
-
-Može da:
-
-Kreira svoje treninge
-
-Uređuje i briše sopstvene treninge
-
-Dodaje vežbe u okviru svojih treninga
-
-Filtrira treninge i vežbe po tipu i ključnim rečima
-
-Vidi i javne treninge (read-only)
-
-3. Administrator (admin)
-
-Ima sve funkcionalnosti člana
-
-Dodatno može:
-
-Da vidi i briše bilo kog korisnika
-
-Upravljа ciljevima (Goals)
-
-Vidi i uređuje sve treninge
-
-### Tehnologije
-(1) - Backend
-
-Laravel 11 (PHP)
-
-Sanctum — autentifikacija preko tokena
-
-Eloquent ORM
-
-MySQL
-
-(2) - Frontend
-
-React + Vite
-
-React Router DOM
-
-Context API za autentifikaciju
-
-Tailwind CSS
+- [ ] Environment configuration (`.env.example` files, configuration cleanup)
+- [ ] Docker images for the backend and the frontend
+- [ ] Local development environment with Docker Compose
+- [ ] CI/CD pipeline with GitHub Actions
+- [ ] Kubernetes deployment (homelab cluster)
+- [ ] Deployment to AWS (free tier)

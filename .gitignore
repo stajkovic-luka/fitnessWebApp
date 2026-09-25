@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Word lock/temp fajlovi
+~$*
+
+# IDE
+.idea/
+.vscode/
