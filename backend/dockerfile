@@ -1,0 +1,12 @@
+FROM php:8.3-cli AS vendor
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends unzip
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts
+
+FROM php:8.3-cli AS backend
+WORKDIR /app
+COPY --from=vendor /app/vendor ./vendor
+COPY . .
+CMD [ "php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
