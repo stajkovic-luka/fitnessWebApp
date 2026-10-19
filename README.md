@@ -136,9 +136,9 @@ Authentication uses bearer tokens issued by Laravel Sanctum.
 
 The project is being modernized step by step. Planned work:
 
-- [ ] Environment configuration (`.env.example` files, configuration cleanup)
-- [ ] Docker images for the backend and the frontend
-- [ ] Local development environment with Docker Compose
+- [x] Environment configuration (`.env.example` files, configuration cleanup)
+- [x] Docker images for the backend and the frontend
+- [x] Local development environment with Docker Compose
 - [ ] CI/CD pipeline with GitHub Actions
 - [ ] Kubernetes deployment (homelab cluster)
 - [ ] Deployment to AWS (free tier)
