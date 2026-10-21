@@ -1,7 +1,9 @@
 services:
     # Front - react
     frontend:
-        build: ./frontend/
+        build:
+            context: ./frontend/
+        image: ghcr.io/stajkovic-luka/fitness-frontend:1.0.0
         ports:
             - "3001:80"
         depends_on:
@@ -10,7 +12,9 @@ services:
             - app_network
     # Back - laravel, php
     backend:
-        build: ./backend/
+        build:
+            context: ./backend/
+        image: ghcr.io/stajkovic-luka/fitness-backend:1.0.0
         env_file:
             - ./.env
         ports:
